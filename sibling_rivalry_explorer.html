@@ -560,6 +560,7 @@
         const actionIndex = parseInt(payload);
         const scrollTop = $('actions').scrollTop;
         if (actions[actionIndex].time <= currTime) {
+          cache.length = cache.findLastIndex(e => e.currTime < actions[actionIndex].time) + 1;
           actions.splice(actionIndex, 1);
           const until = currTime;
           currTime = Infinity;
