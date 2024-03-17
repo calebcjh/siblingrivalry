@@ -1,0 +1,2079 @@
+<html>
+  <head>
+    <style>
+      body {
+        font-family: 'system-ui';
+      }
+      #shroud {
+        background-image: url(https://static.wikia.nocookie.net/necromerger/images/7/7d/Foul_Chicken_L5.gif);
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-position: center;
+        background-color: rgba(0, 0, 0, 0.3);
+        background-repeat: no-repeat;
+      }
+      #clock {
+        width: 380px;
+      }
+      td,
+      #stats span,
+      #shop span {
+        font-size: 9px;
+        border: 1px solid black;
+        padding: 0;
+        width: 75px;
+        height: 75px;
+        text-align: center;
+      }
+      td {
+        cursor: grab;
+      }
+      #stats span,
+      #shop span,
+      #upgrades span,
+      #trades span {
+        cursor: pointer;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        vertical-align: middle;
+      }
+      #stats span {
+        cursor: default;
+      }
+      #upgrades span, #trades span {
+        font-size: 11px;
+        border: 1px solid black;
+        padding: 5px;
+        margin: 15px;
+        width: 85px;
+        height: 85px;
+        text-align: center;
+      }
+      table {
+        border-spacing: 0px;
+      }
+      #actions,
+      #events {
+        font-family: monospace;
+      }
+      #events span, #actions span {
+        cursor: pointer;
+        display: block;
+        width: 100%;
+      }
+      .done {
+        background-color: lightgrey;
+      }
+      .page {
+        display: inline-block;
+        height: 95%;
+        overflow: hidden;
+      }
+      .page.limited {
+        width: 382px;
+      }
+      #actions,
+      #events {
+        border: 1px solid black;
+        height: 36%;
+        overflow-y: scroll;
+        position: relative;
+      }
+      button {
+        height: 23px;
+        vertical-align: top;
+        line-height: 18px;
+      }
+      #play {
+        width: 28px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="shroud"></div>
+    <div class="page limited">
+      <b>Time Controls</b> &nbsp; <button onclick="go(-3600)">&lt;&lt;&lt;</button> <button onclick="go(-60)">&lt;&lt;</button> <button onclick="go(-1)">&lt;</button> <button id="play" onclick="startStop()">▶</button> <button onclick="go(1)">&gt;</button> <button onclick="go(60)">&gt;&gt;</button> <button onclick="go(3600)">&gt;&gt;&gt;</button><br><br>
+      <input type="range" min="1" max="259200" value="0" id="clock">
+      <br><br>
+      <div id="stats">
+        <span id="time"></span><span id="score"></span><span id="iron"></span><span id="gunpowder"></span><span id="steel"></span>
+      </div>
+      <br>
+      <table id="board">
+        <tr>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+        </tr>
+        <tr>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+        </tr>
+        <tr>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+        </tr>
+        <tr>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+        </tr>
+        <tr>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+        </tr>
+        <tr>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+        </tr>
+        <tr>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+        </tr>
+        <tr>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+          <td onclick="tryTap(event)" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+        </tr>
+      </table>
+      <br>
+      <div id="shop">
+        <span id="cannon" onclick="buyCannon()">Buy Cannon (20 gunpowder)</span><span id="furnace" onclick="buyFurnace()">Buy Furnace (10 gunpower, 5 steel)</span><span id="anvil" onclick="buyAnvil()">Buy Anvil (25 steel)</span><span id="decoy" onclick="buyMagicalDecoy()">Buy Magical Decoy (40 steel)</span><span id="bomb" onclick="buyAlchemyTable()">Buy Bomb Table (40 gunpowder, 20 steel)</span>
+      </div>
+    </div>
+    <div class="page limited">
+      <div>
+        <b>Config</b><br><br>
+        <input type="checkbox" id="offlineMode" onchange="changeOfflineMode()"><label for="offlineMode">Offline Mode</label><br>
+        <input type="checkbox" id="knightStone" onchange="process(); draw()"><label for="knightStone">Knight Stone</label><br>
+        <input type="checkbox" id="goldenCannon" onchange="process(); draw()"><label for="goldenCannon">Golden Cannon</label><br>
+        <input type="checkbox" id="scoreBoost" onchange="process(); draw()"><label for="scoreBoost">Score Boost</label><br>
+        <input type="checkbox" id="autoMerge"><label for="autoMerge">Automerge after Multitap</label><br>
+      </div>
+      <br>
+      <div>
+        <b>Upgrades</b><br><br>
+        <div id="upgrades">
+          <span id="scoreUpgrade" onclick="scoreUpgrade.upgrade()"></span><span id="enidUpgrade" onclick="enidUpgrade.upgrade()"></span><span id="ironUpgrade" onclick="ironUpgrade.upgrade()"></span><span id="floatingWeaponUpgrade" onclick="floatingWeaponUpgrade.upgrade()"></span><span id="cannonUpgrade" onclick="cannonUpgrade.upgrade()"></span><span id="bombUpgrade" onclick="bombUpgrade.upgrade()"></span>
+        </div>
+      </div>
+      <br>
+      <div>
+        <b>Trades</b><br><br>
+        <div id="trades">
+          <span onclick="trade(event)"></span><span onclick="trade(event)"></span><span onclick="trade(event)"></span><span onclick="trade(event)"></span><span onclick="trade(event)"></span><span onclick="trade(event)"></span>
+        </div>
+      </div>
+    </div>
+    <div class="page">
+      <div ondrop="deleteAction(event)" ondragover="allowDrop(event)">
+        <b>Actions</b><br><br>
+        <div id="actions" ondragstart="dragAction(event)" onclick="goToAction(event)">
+        </div>
+      </div>
+      <br>
+      <div>
+        <b>Events</b><br><br>
+        <input type="checkbox" id="hideFurnaceEvents" checked="true" onchange="draw()"><label for="hideFurnaceEvents">Hide furnace events</label><br>
+        <input type="checkbox" id="hideFurnaceNoCapacityEvents" checked="true" onchange="draw()"><label for="hideFurnaceNoCapacityEvents">Hide furnace no capacity events</label><br>
+        <input type="checkbox" id="hideCannonFiringEvents" checked="true" onchange="draw()"><label for="hideCannonFiringEvents">Hide cannon firing events</label><br>
+        <input type="checkbox" id="hideCannonNoTargetEvents" checked="true" onchange="draw()"><label for="hideCannonNoTargetEvents">Hide cannon no target events</label><br>
+        <input type="checkbox" id="hideAnvilTapSpawnEvents" checked="true" onchange="draw()"><label for="hideCannonNoTargetEvents">Hide anvil tap spawn events</label><br><br>
+        <div id="events" onclick="goToEvent(event)">
+        </div>
+      </div>
+    </div>
+    <script>
+      // Modified from https://stackoverflow.com/questions/42919469/efficient-way-to-implement-priority-queue-in-javascript
+      {
+        const top = 0,
+          parent = c => (c + 1 >>> 1) - 1,
+          left = c => (c << 1) + 1,
+          right = c => c + 1 << 1;
+        class PriorityQueue {
+          constructor(c = (d, e) => d > e) {
+            this._heap = [], this._comparator = c
+          }
+          clear() {
+            this._heap.length = 0
+          }
+          size() {
+            return this._heap.length
+          }
+          isEmpty() {
+            return 0 == this.size()
+          }
+          peek() {
+            return this._heap[top]
+          }
+          push(...c) {
+            return c.forEach(d => {
+              this._heap.push(d), this._siftUp()
+            }), this.size()
+          }
+          pop() {
+            const c = this.peek(),
+              d = this.size() - 1;
+            return d > top && this._swap(top, d), this._heap.pop(), this._siftDown(), c
+          }
+          replace(c) {
+            const d = this.peek();
+            return this._heap[top] = c, this._siftDown(), d
+          }
+          _greater(c, d) {
+            return this._comparator(this._heap[c], this._heap[d])
+          }
+          _swap(c, d) {
+            [this._heap[c], this._heap[d]] = [this._heap[d], this._heap[c]]
+          }
+          _siftUp(i) {
+            for (let c = i || this.size() - 1; c > top && this._greater(c, parent(c));) this._swap(c, parent(c)), c = parent(c)
+          }
+          _siftDown(i) {
+            for (let d, c = i || top; left(c) < this.size() && this._greater(left(c), c) || right(c) < this.size() && this._greater(right(c), c);) d = right(c) < this.size() && this._greater(right(c), left(c)) ? right(c) : left(c), this._swap(c, d), c = d
+          }
+          remove(v) {
+            const i = this._heap.indexOf(v);
+            if (i == this.size() - 1) {
+              this._heap.pop()
+            } else {
+              this._swap(i, this.size() - 1);
+              this._heap.pop();
+              this._siftDown(i);
+              this._siftUp(i);
+              this._verify(0);
+            }
+          }
+        }
+        window.PriorityQueue = PriorityQueue
+      }
+      
+      // https://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/
+      {
+        let mix = (superclass) => new MixinBuilder(superclass);
+        class MixinBuilder {
+          constructor(superclass) {
+            this.superclass = superclass;
+          }
+          with(...mixins) {
+            return mixins.reduce((c, mixin) => mixin(c), this.superclass);
+          }
+        }
+        window.mix = mix
+      }
+      
+      // https://medium.com/@fsufitch/is-javascript-array-sort-stable-46b90822543f
+      Array.prototype.stableSort = function(t) {
+        t = t || ((t, e) => t < e ? -1 : t > e ? 1 : 0);
+        let e = this.map((t, e) => [t, e]),
+          r = (e, r) => {
+            let o = t(e[0], r[0]);
+            return 0 != o ? o : e[1] - r[1]
+          };
+        e.sort(r);
+        for (let o = 0; o < this.length; o++) this[o] = e[o][0];
+        return this
+      };
+      
+      // Modified from https://stackoverflow.com/questions/6213227/fastest-way-to-convert-a-number-to-radix-64-in-javascript
+      Number.prototype.toBase64 = function(l) {
+        for (var r, t = Math.floor(this), o = ""; r = t % 64, o = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/".charAt(r) + o, 0 != (t = Math.floor(t / 64)););
+        return o.padStart(l, "0")
+      }, window.parseInt64 = function(r) {
+        var t = 0;
+        r = r.split("");
+        for (var o = 0; o < r.length; o++) t = 64 * t + "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/".indexOf(r[o]);
+        return parseInt(t)
+      };
+      
+      const $ = (id) => document.getElementById(id);
+      
+      // Sibling Rivalry Explorer
+      // Reference: https://www.youtube.com/watch?v=r8MOxrQBef8
+      const board = [];
+      const upgrades = [];
+      const trades = [];
+      const actions = [];
+      const events = [];
+      const triggeredEvents = [];
+      const queue = new PriorityQueue((a, b) => {
+        if (a.time == b.time) {
+          const aId = actions.indexOf(a),
+            bId = actions.indexOf(b);
+          if (aId == -1 && bId == -1) {
+            return a.position < b.position;
+          } else {
+            return aId < bId;
+          }
+        }
+        return a.time < b.time;
+      });
+      
+      function numSpaces() {
+        return 40 - board.filter(e => !!e).length;
+      }
+      
+      function hasSpace() {
+        return numSpaces() > 0;
+      }
+      
+      function getEmptySpace(near = 39) {
+        for (let i = near, j = near; i >= 0 || j <= 39; i--, j++) {
+          if (i >= 0 && !board[i]) {
+            return i;
+          }
+          if (j <= 39 && !board[j]) {
+            return j;
+          }
+        }
+        return -1;
+      }
+      
+      let dblClickTimer;
+      function tryTap(ev) {
+        if (dblClickTimer) {
+          window.clearTimeout(dblClickTimer);
+          dblClickTimer = undefined;
+          dblTap(ev) || tap(ev);
+        } else {
+          dblClickTimer = window.setTimeout(() => {
+            dblClickTimer = undefined;
+            tap(ev);
+          }, 200);
+        }
+      }
+      
+      function tap(ev) {
+        const parent = ev.target.parentNode;
+        const targetIndex = Array.prototype.indexOf.call(parent.parentNode.querySelectorAll('tr'), parent) * 5 + Array.prototype.indexOf.call(parent.querySelectorAll('td'), ev.target);
+        
+        if (board[targetIndex] && board[targetIndex].tap) {
+          board[targetIndex].tap();
+        } else if (board[targetIndex] && (!board[targetIndex].mergeAll || !board[targetIndex].mergeAll()) && board[targetIndex].claim) {
+          board[targetIndex].claim();
+        }
+      }
+      
+      function dblTap(ev) {
+        const parent = ev.target.parentNode;
+        const targetIndex = Array.prototype.indexOf.call(parent.parentNode.querySelectorAll('tr'), parent) * 5 + Array.prototype.indexOf.call(parent.querySelectorAll('td'), ev.target);
+        
+        if (board[targetIndex] && board[targetIndex].multiTap) {
+          board[targetIndex].multiTap();
+          return true;
+        }
+        
+        return false;
+      }
+      
+      function allowDrop(ev) {
+        ev.preventDefault();
+      }
+      
+      function drag(ev) {
+        const parent = ev.target.parentNode;
+        const index = Array.prototype.indexOf.call(parent.parentNode.querySelectorAll('tr'), parent) * 5 + Array.prototype.indexOf.call(parent.querySelectorAll('td'), ev.target);
+        ev.dataTransfer.setData('src', index);
+      }
+      
+      function drop(ev) {
+        const index = parseInt(ev.dataTransfer.getData('src'));
+      
+        if (!!board[index]) {
+          ev.preventDefault();
+        } else {
+          return;
+        }
+      
+        const parent = ev.target.parentNode;
+        const targetIndex = Array.prototype.indexOf.call(parent.parentNode.querySelectorAll('tr'), parent) * 5 + Array.prototype.indexOf.call(parent.querySelectorAll('td'), ev.target);
+      
+        if (index == targetIndex) {
+          return;
+        }
+      
+        if (!board[targetIndex] || !(
+            (board[index].merge && board[targetIndex].merge && board[index].merge(board[targetIndex])) ||
+            (board[index].attack && board[targetIndex].take && board[index].attack(board[targetIndex])))) {
+          board[index].swap(targetIndex);
+        }
+      }
+      
+      function buy(invadersDefeatedReq, ironReq, gunpowderReq, steelReq) {
+        if (hasSpace() && invadersDefeated >= invadersDefeatedReq && iron >= ironReq && gunpowder >= gunpowderReq && steel >= steelReq) {
+          iron -= ironReq;
+          gunpowder -= gunpowderReq;
+          steel -= steelReq;
+          return true;
+        }
+        return false;
+      }
+      
+      function makeBuyItemAction(time, code) {
+        const buyOptions = {
+          'c': {
+            name: 'Cannon',
+            fn: doBuyCannon
+          },
+          'f': {
+            name: 'Furnace',
+            fn: doBuyFurnace
+          },
+          'a': {
+            name: 'Anvil',
+            fn: doBuyAnvil
+          },
+          'm': {
+            name: 'Magical Decoy',
+            fn: doBuyMagicalDecoy
+          },
+          't': {
+            name: 'Alchemy Table',
+            fn: doBuyAlchemyTable
+          }
+        };
+      
+        return {
+          time: time,
+          desc: `Buy ${buyOptions[code].name}`,
+          run: buyOptions[code].fn,
+          code: `${time.toBase64(3)}b${code}`
+        };
+      }
+      
+      function buyItem(name, fn, code) {
+        const action = makeBuyItemAction(currTime, code || name[0].toLowerCase());
+        actions.push(action);
+        processEvent(action);
+        draw();
+      }
+      
+      function buyCannon() {
+        buyItem('Cannon', doBuyCannon);
+      }
+      
+      function doBuyCannon() {
+        if (buy(10, 0, 20, 0)) {
+          new Cannon(getEmptySpace(), 1).report();
+          return true;
+        }
+        return false;
+      }
+      
+      function buyFurnace() {
+        buyItem('Furnace', doBuyFurnace);
+      }
+      
+      function doBuyFurnace() {
+        if (buy(25, 0, 10, 5)) {
+          new Furnace(getEmptySpace(), 1).report();
+          return true;
+        }
+        return false;
+      }
+      
+      function buyAnvil() {
+        buyItem('Anvil', doBuyAnvil);
+      }
+      
+      function doBuyAnvil() {
+        if (buy(50, 0, 0, 25)) {
+          new Anvil(getEmptySpace(), 1).report();
+          return true;
+        }
+        return false;
+      }
+      
+      function buyMagicalDecoy() {
+        buyItem('Magical Decoy', doBuyMagicalDecoy);
+      }
+      
+      function doBuyMagicalDecoy() {
+        if (buy(100, 0, 0, 40)) {
+          new MagicalDecoy(getEmptySpace()).report();
+          return true;
+        }
+        return false;
+      }
+      
+      function buyAlchemyTable() {
+        buyItem('Alchemy Table', doBuyAlchemyTable, 't');
+      }
+      
+      function doBuyAlchemyTable() {
+        if (buy(200, 0, 40, 20)) {
+          new AlchemyTable(getEmptySpace(), 1).report();
+          draw();
+          return true;
+        }
+        return false;
+      }
+      
+      function goToAction(event) {
+        if (event.target.parentNode.id != 'actions') {
+          return;
+        }
+        process(actions[event.target.dataset.index].time);
+        draw();
+      }
+      
+      function goToEvent(event) {
+        if (event.target.parentNode.id != 'events') {
+          return;
+        }
+        process(parseInt(event.target.dataset.time));
+        draw();
+      }
+      
+      function dragAction(event) {
+        event.dataTransfer.setData('actionIndex', event.target.dataset.index);
+      }
+      
+      function deleteAction(event) {
+        const payload = event.dataTransfer.getData('actionIndex');
+        if (!payload) {
+          return;
+        }
+        
+        const actionIndex = parseInt(payload);
+        const scrollTop = $('actions').scrollTop;
+        if (actions[actionIndex].time <= currTime) {
+          actions.splice(actionIndex, 1);
+          const until = currTime;
+          currTime = Infinity;
+          process(until);
+        } else {
+          actions.splice(actionIndex, 1);
+        }
+        draw();
+        $('actions').scrollTop = scrollTop;
+      }
+      
+      function startStop() {
+        if (clockInterval || currTime >= MAX_TIME) {
+          window.clearInterval(clockInterval);
+          clockInterval = null;
+          $('play').innerHTML = '▶';
+        } else {
+          clockInterval = window.setInterval(() => {
+            if (process(currTime + 1)) {
+              draw();
+            } else {
+              drawClock();
+            }
+          }, 1000);
+          $('play').innerHTML = '❚❚';
+        }
+      }
+      
+      function go(t) {
+        process(currTime + t);
+        draw();
+      }
+      
+      function makeOfflineModeAction(time, offline) {
+        return {
+          time: time,
+          desc: `Go o${offline ? 'ff' : 'n'}line`,
+          run: doChangeOfflineMode.bind(null, offline),
+          code: `${time.toBase64(3)}o`
+        };
+      }
+      
+      function changeOfflineMode() {
+        const action = makeOfflineModeAction(currTime, $('offlineMode').checked);
+        actions.push(action);
+        const result = processEvent(action);
+        draw();
+        return result;
+      }
+      
+      function doChangeOfflineMode(off) {
+        offline = off;
+        $('offlineMode').checked = off;
+        return true;
+      }
+      
+      function trade(ev) {
+        const targetIndex = Array.prototype.indexOf.call(ev.target.parentNode.querySelectorAll('span'), ev.target) + 6 * Math.floor(currTime / 86400);
+        
+        if (trades[targetIndex]) {
+          trades[targetIndex].trade();
+        }
+      }
+      
+      // State
+      const MAX_TIME = 3 * 86400;
+      const MAX_IRON = 100000;
+      const ENID_RECHARGE_INTERVAL = 90 * 60;
+      let offline = false;
+      let currTime, score, iron, gunpowder, steel;
+      let invadersDefeated = 0;
+      let clockInterval;
+      
+      let scoreUpgrade;
+      let enidUpgrade;
+      let ironUpgrade;
+      let floatingWeaponUpgrade;
+      let cannonUpgrade;
+      let bombUpgrade;
+      
+      class Actor {
+        constructor(position) {
+          // TODO: Rework items not placed on board
+          if (position != undefined) {
+            this.position = position;
+            board[position] = this;
+          }
+        }
+        report() {
+          const formatted = formatTime(currTime).map(v => '' + v);
+          const timeStr = `${formatted[0]}d${formatted[1].padStart(2, '0')}h${formatted[2].padStart(2, '0')}m${formatted[3].padStart(2, '0')}s`;
+          triggeredEvents.push(`✅ ${timeStr}: ${this.toString()} spawned @${this.position}`);
+        }
+        static makeSwapAction(time, i, j, code) {
+          return {
+            time: time,
+            desc: `Move ${board[i] ? board[i].toString() : 'Unknown'}@${i} to @${j}`,
+            run: ((i, j, code) => {
+              if (!board[i] || board[i].code() != code) {
+                return false;
+              }
+              return board[i].doSwap(j);
+            }).bind(null, i, j, code),
+            code: `${time.toBase64(3)}s${i.toBase64()}${j.toBase64()}${code}`
+          };
+        }
+        swap(to) {
+          const action = Actor.makeSwapAction(currTime, this.position, to, this.code());
+          actions.push(action);
+          const result = processEvent(action);
+          draw();
+          return result;
+        }
+        doSwap(to) {
+          const temp = board[to];
+          board[to] = this;
+      
+          if (temp) {
+            board[this.position] = temp;
+            temp.position = this.position;
+          } else {
+            delete board[this.position];
+          }
+          
+          this.position = to;
+      
+          return true;
+        }
+        remove() {
+          delete board[this.position];
+        }
+        toString() {
+          return this.constructor.name;
+        }
+        code() {
+          return this.toString().split(' ')[0].split('').filter(c => 'ABCDEFGHIJKLMNOPQRSTUBWXYZ0123456789'.indexOf(c) != -1).join('');
+        }
+        serialize() {
+          return `${this.constructor.name}:${this.position}`;
+        }
+        static deserialize(constructor, position) {
+          return new constructor(position);
+        }
+      }
+      
+      function makeMergeAction(time, i, j, code) {
+        return {
+          time: time,
+          desc: `Merge ${board[i] ? board[i].toString() : 'Unknown'}@${i} with @${j}`,
+          run: ((i, j, code) => {
+            if (!board[i] || board[i].code() != code || !board[j] || !board[i].canMerge || !board[i].canMerge(board[j])) {
+              return false;
+            }
+            return board[i].doMerge(board[j]);
+          }).bind(null, i, j, code),
+          code: `${time.toBase64(3)}m${i.toBase64()}${j.toBase64()}${code}`
+        };
+      }
+      
+      function mergeAll(i) {
+        let merges = 0;
+        let success = true;
+        const q = [board[i]];
+        while (q.length) {
+          const curr = q.shift();
+          if (!curr.canMerge || curr.level == curr.maxLevel) {
+            continue;
+          }
+          const similar = board.filter(e => e != curr && q.indexOf(e) == -1 && e.code() == curr.code() && e.level == curr.level);
+          if (similar.length == 0) {
+            continue;
+          }
+          const target = similar.shift();
+          success &= curr.doMerge(target);
+          merges++;
+          q.push(...similar, board[target.position]);
+        }
+        return merges > 0 && success;
+      }
+      
+      function makeMergeAllAction(time, i, code) {
+        return {
+          time: time,
+          desc: `Merge all like ${board[i] ? board[i].toString() : 'Unknown'}@${i}`,
+          run: ((i, code) => {
+            if (!board[i] || board[i].code() != code || !board[i].canMerge) {
+              return false;
+            }
+            
+            return mergeAll(i);
+          }).bind(null, i, code),
+          code: `${time.toBase64(3)}M${i.toBase64()}${code}`
+        };
+      }
+      
+      const Mergeable = (superclass) => class extends superclass {
+        canMerge(target) {
+          return target && target.constructor == this.constructor && target.level == this.level && this.level < this.maxLevel;
+        }
+        merge(target) {
+          if (this.canMerge(target)) {
+            const action = makeMergeAction(currTime, this.position, target.position, this.code());
+            actions.push(action);
+            const result = processEvent(action);
+            draw();
+            return result;
+          }
+          return false;
+        }
+        doMerge(target) {
+          if (this.canMerge(target)) {
+            target.level++;
+            if (target.reset) { // For periodics and anvils
+              target.reset();
+            }
+            this.remove();
+            return true;
+          }
+          return false;
+        }
+        mergeAll() {
+          if (this.level < this.maxLevel && board.filter(e => e != this && e.code() == this.code() && e.level == this.level).length > 0) {
+            const action = makeMergeAllAction(currTime, this.position, this.code());
+            actions.push(action);
+            const result = processEvent(action);
+            draw();
+            return result;
+          }
+          return false;
+        }
+        toString() {
+          return `${this.constructor.name}${this.level}`;
+        }
+        serialize() {
+          return `${this.constructor.name}:${this.position}:${this.level}`;
+        }
+        static deserialize(constructor, position, level) {
+          return new constructor(position, level);
+        }
+      };
+      
+      function makeClaimAction(time, i, code) {
+        return {
+          time: time,
+          desc: `Claim ${board[i] ? board[i].toString() : 'Unknown'}@${i}`,
+          run: ((i, code) => {
+            if (!board[i] || board[i].code() != code || !board[i].doClaim) {
+              return false;
+            }
+            return board[i].doClaim();
+          }).bind(null, i, code),
+          code: `${time.toBase64(3)}c${i.toBase64()}${code}`
+        };
+      }
+      
+      const Claimable = (superclass) => class extends superclass {
+        claim() {
+          const action = makeClaimAction(currTime, this.position, this.code());
+          actions.push(action);
+          const result = processEvent(action);
+          draw();
+          return result;
+        }
+        doClaim(ironAmt, gunpowderAmt, steelAmt) {
+          const wasted = iron + ironAmt > ironUpgrade.modify(MAX_IRON);
+          iron = Math.min(ironUpgrade.modify(MAX_IRON), iron + ironAmt);
+          gunpowder += gunpowderAmt;
+          steel += steelAmt;
+          this.remove();
+          return !wasted;
+        }
+      }
+      
+      class IronPile extends mix(Actor).with(Mergeable, Claimable) {
+        constructor(position, level) {
+          super(position);
+          this.level = level;
+          this.maxLevel = 2;
+        }
+        doClaim() {
+          return super.doClaim([undefined, 0.05, 0.12][this.level] * ironUpgrade.modify(MAX_IRON), 0, 0);
+        }
+      }
+      
+      class GunpowderPile extends mix(Actor).with(Mergeable, Claimable) {
+        constructor(position, level) {
+          super(position);
+          this.level = level;
+          this.maxLevel = 4;
+        }
+        doClaim() {
+          return super.doClaim(0, [undefined, 2, 5, 12, 30][this.level], 0);
+        }
+      }
+      
+      class SteelPile extends mix(Actor).with(Mergeable, Claimable) {
+        constructor(position, level) {
+          super(position);
+          this.level = level;
+          this.maxLevel = 4;
+        }
+        doClaim() {
+          return super.doClaim(0, 0, [undefined, 2, 5, 12, 30][this.level]);
+        }
+      }
+      
+      class Enemy extends Actor {
+        constructor(position) {
+          super(position);
+          this.hp = 0;
+          this.score = 0;
+        }
+        take(damage) {
+          const effectiveDamage = Math.min(damage, this.hp);
+          this.hp -= effectiveDamage;
+          if (this.hp == 0) {
+            this.die();
+          }
+          return damage - effectiveDamage;
+        }
+        die() {
+          const formatted = formatTime(currTime).map(v => '' + v);
+          const timeStr = `${formatted[0]}d${formatted[1].padStart(2, '0')}h${formatted[2].padStart(2, '0')}m${formatted[3].padStart(2, '0')}s`;
+          triggeredEvents.push(`✅ ${timeStr}: ${this.toString()}@${this.position} has been defeated`);
+          
+          score += scoreUpgrade.modify(this.score);
+          invadersDefeated++;
+          this.remove();
+        }
+        toString() {
+          return `${this.constructor.name} (${this.hp}/${this.maxHp})`;
+        }
+        serialize() {
+          return `${this.constructor.name}:${this.position}:${this.hp}`;
+        }
+        static deserialize(constructor, position, hp) {
+          const enemy = new constructor(position);
+          enemy.hp = hp;
+          return enemy;
+        }
+      }
+      
+      class IronGrunt extends Enemy {
+        constructor(position) {
+          super(position);
+          this.maxHp = 500;
+          this.hp = this.maxHp;
+          this.score = 250;
+        }
+        die() {
+          super.die();
+          new IronPile(this.position, 1).report();
+        }
+      }
+      
+      class Musketeer extends Enemy {
+        constructor(position) {
+          super(position);
+          this.maxHp = 25000;
+          this.hp = this.maxHp;
+          this.score = 15000;
+        }
+        die() {
+          super.die();
+          new GunpowderPile(this.position, 3).report();
+        }
+      }
+      
+      class GunpowderGrunt extends Enemy {
+        constructor(position) {
+          super(position);
+          this.maxHp = 1000;
+          this.hp = this.maxHp;
+          this.score = 500;
+        }
+        die() {
+          super.die();
+          new GunpowderPile(this.position, 1).report();
+        }
+      }
+      
+      class SteelGrunt extends Enemy {
+        constructor(position) {
+          super(position);
+          this.maxHp = 2500;
+          this.hp = this.maxHp;
+          this.score = 1250;
+        }
+        die() {
+          super.die();
+          new SteelPile(this.position, 1).report();
+        }
+      }
+      
+      class Warrior extends Enemy {
+        constructor(position) {
+          super(position);
+          this.maxHp = 50000;
+          this.hp = this.maxHp;
+          this.score = 50000;
+        }
+        die() {
+          super.die();
+          new SteelPile(this.position, 3).report();
+        }
+      }
+      
+      class BattleMage extends Enemy {
+        constructor(position) {
+          super(position);
+          this.maxHp = 500000;
+          this.hp = this.maxHp;
+          this.score = 750000;
+        }
+      }
+      
+      const Periodic = (superclass) => class extends superclass {
+        constructor(time, ...args) {
+          super(...args);
+          this.period = time;
+          this.time = currTime + time;
+          queue.push(this);
+        }
+        suspend() {
+          queue.remove(this);
+          return this;
+        }
+        resume(time) {
+          this.time = time || currTime + this.period;
+          queue.push(this);
+        }
+        remove() {
+          queue.remove(this);
+          super.remove();
+        }
+        reset(time) {
+          this.suspend();
+          this.resume(time);
+          return this;
+        }
+        run() {
+          this.time += this.period;
+          queue.push(this);
+        }
+      };
+      
+      function findAndMerge(item) {
+        const found = board.find(e => !!e && e.toString() == item);
+        if (found) {
+          mergeAll(found.position);
+        }
+      }
+      
+      class Tappable extends Actor {
+        static makeTapAction(time, i, code) {
+          return {
+            time: time,
+            desc: `Tap on ${board[i] ? board[i].toString() : 'Unknown'}@${i}`,
+            run: ((i, code) => {
+              if (!board[i] || board[i].code() != code) {
+                return false;
+              }
+              return board[i].doTap();
+            }).bind(null, i, code),
+            code: `${time.toBase64(3)}t${i.toBase64()}${code}`
+          };
+        }
+        static makeMultiTapAction(time, i, n, code, autoMerge) {
+          return {
+            time: time,
+            desc: `Tap on ${board[i] ? board[i].toString() : 'Unknown'}@${i} ${n} times${autoMerge ? ', then automerge' : ''}`,
+            run: ((i, n, code, autoMerge) => {
+              if (!board[i] || board[i].code() != code) {
+                return false;
+              }
+              let result = true;
+              for (let j = 0; j < n; j++) {
+                result &= board[i].doTap();
+              }
+              if (autoMerge) {
+                findAndMerge('HeatedBlade');
+                findAndMerge('Glove');
+                findAndMerge('Gloves');
+                findAndMerge('FancyGlove');
+                findAndMerge('FancyGloves');
+              }
+              return result;
+            }).bind(null, i, n, code, autoMerge),
+            code: `${time.toBase64(3)}${autoMerge ? 'A' : 'T'}${i.toBase64()}${n.toBase64()}${code}`
+          };
+        }
+        tap() {
+          const action = Tappable.makeTapAction(currTime, this.position, this.code());
+          actions.push(action);
+          const result = processEvent(action);
+          draw();
+          return result;
+        }
+        multiTap() {
+          const taps = this.tapsAvailable && this.tapsAvailable() || 0;
+          if (taps == 0) {
+            return;
+          }
+          const action = Tappable.makeMultiTapAction(currTime, this.position, taps, this.code(), $('autoMerge').checked);
+          actions.push(action);
+          const result = processEvent(action);
+          draw();
+          return result;
+        }
+        doTap() {}
+      }
+      
+      class Enid extends mix(Tappable).with(Periodic) {
+        constructor(position) {
+          super(ENID_RECHARGE_INTERVAL, position);
+          this.charges = 5;
+          this.fullyCharged = false;
+        }
+        run() {
+          if (this.charges < 10) {
+            this.charges++;
+            this.time += enidUpgrade.modify(ENID_RECHARGE_INTERVAL);
+            queue.push(this);
+            this.desc = `${this.toString()} gained a charge`;
+            return true;
+          } else {
+            this.fullyCharged = true;
+            this.desc = `${this.toString()} is fully charged`;
+            return false;
+          }
+        }
+        doTap() {
+          if (!hasSpace() || !this.charges) {
+            return false;
+          }
+          
+          new Banner(getEmptySpace(this.position)).report();
+          this.charges--;
+          if (this.fullyCharged) {
+            this.charges++;
+            this.fullyCharged = false;
+            this.time = currTime + enidUpgrade.modify(ENID_RECHARGE_INTERVAL);
+            queue.push(this);
+          }
+          return true;
+        }
+        toString() {
+          return `Enid (${this.charges}/10)`;
+        }
+        serialize() {
+          return `${this.constructor.name}:${this.position}:${this.time}:${this.charges}:${this.fullyCharged ? 1 : 0}`;
+        }
+        static deserialize(constructor, position, time, charges, fullyCharged) {
+          const enid = new constructor(position).reset(time);
+          enid.charges = charges;
+          enid.fullyCharged = !!fullyCharged;
+          
+          if (!!fullyCharged) {
+            enid.suspend();
+          }
+          
+          return enid;
+        }
+      }
+      
+      class Banner extends Tappable {
+        constructor(position) {
+          super(position);
+          this.charges = 3;
+        }
+        tapsAvailable() {
+          return Math.min(this.charges, numSpaces());
+        }
+        doTap() {
+          if (!hasSpace()) {
+            return false;
+          }
+          
+          new [IronGrunt, GunpowderGrunt, SteelGrunt][3 - this.charges--](getEmptySpace(this.position)).report();
+          if (!this.charges) {
+            this.remove();
+          }
+          return true;
+        }
+        toString() {
+          return `Banner (${this.charges}/3)`;
+        }
+        serialize() {
+          return `${this.constructor.name}:${this.position}:${this.charges}`;
+        }
+        static deserialize(constructor, position, charges) {
+          const banner = new constructor(position);
+          banner.charges = charges;
+          return banner;
+        }
+      }
+      
+      class DecoyPart extends mix(Actor).with(Mergeable) {
+        constructor(position, level) {
+          super(position);
+          this.level = level;
+          this.maxLevel = 5;
+        }
+        spawnDecoy(position) {
+          new Decoy(position).report();
+        }
+        doMerge(target) {
+          const result = super.doMerge(target);
+          if (result && target.level == target.maxLevel) {
+            target.remove();
+            this.spawnDecoy(target.position);
+          }
+          return result;
+        }
+        code() {
+          return `D${super.code()}${this.level}`;
+        }
+        toString() {
+          return [undefined, 'Glove', 'Gloves', 'Helmet', 'Chestplate', 'Decoy'][this.level];
+        }
+      }
+      
+      class Decoy extends Tappable {
+        doTap() {
+          this.remove();
+          new Musketeer(this.position).report();
+          return true;
+        }
+      }
+      
+      class FancyDecoyPart extends DecoyPart {
+        spawnDecoy(position) {
+          new FancyDecoy(position).report();
+        }
+        toString() {
+          return `Fancy${super.toString()}`;
+        }
+      }
+      
+      class FancyDecoy extends Tappable {
+        doTap() {
+          this.remove();
+          new Warrior(this.position).report();
+          return true;
+        }
+      }
+      
+      class MagicalDecoy extends Tappable {
+        doTap() {
+          this.remove();
+          new BattleMage(this.position).report();
+          return true;
+        }
+      }
+      
+      class Furnace extends mix(Actor).with(Mergeable, Periodic) {
+        constructor(position, level) {
+          super(10, position);
+          this.level = level;
+          this.maxLevel = 5;
+        }
+        run() {
+          const amount = [undefined, 3, 5, 8, 15, 25][this.level];
+          const excess = iron + amount - ironUpgrade.modify(MAX_IRON);
+          iron = Math.min(ironUpgrade.modify(MAX_IRON), iron + amount);
+      
+          super.run();
+      
+          if (excess <= 0) {
+            this.desc = `${this.toString()}@${this.position} produces ${[undefined, 3, 5, 8, 15, 25][this.level]} iron`;
+            return true;
+          } else {
+            this.desc = `${this.toString()}@${this.position} unable to add ${excess} iron`;
+            return false;
+      
+          }
+        }
+        serialize() {
+          return `${this.constructor.name}:${this.position}:${this.level}:${this.time}`;
+        }
+        static deserialize(constructor, position, level, time) {
+          return new constructor(position, level).reset(time);
+        }
+      }
+      
+      class Cannon extends mix(Actor).with(Mergeable, Periodic) {
+        constructor(position, level) {
+          super(180, position);
+          this.level = level;
+          this.maxLevel = 5;
+        }
+        getDamage() {
+          return cannonUpgrade.modify([undefined, 100, 180, 320, 560, 1000][this.level]);
+        }
+        run() {
+          let damage = this.getDamage();
+          let desc = [];
+          let success = true;
+          while (damage > 0) {
+            const target = board.filter(e => e instanceof Enemy).reduce((a, c) => a.hp <= c.hp ? a : c, {
+              hp: Infinity
+            });
+            if (target.hp == Infinity) {
+              desc.push(`no target found for ${damage} damage`);
+              success = false;
+              break;
+            }
+      
+            let dmg = damage;
+            let targetDesc = `${target.toString()}@${target.position}`;
+            damage = target.take(damage);
+            desc.push(`deals ${dmg - damage} to ${targetDesc}`);
+      
+            if (!offline) {
+              break;
+            }
+          }
+      
+          super.run();
+      
+          this.desc = `${this.toString()}@${this.position} ${desc.join('; ')}`;
+      
+          return success;
+        }
+        serialize() {
+          return `${this.constructor.name}:${this.position}:${this.level}:${this.time}`;
+        }
+        static deserialize(constructor, position, level, time) {
+          return new constructor(position, level).reset(time);
+        }
+      }
+      
+      class GoldenCannon extends Cannon {
+        getDamage() {
+          return board.filter(e => e instanceof Cannon && e != this).reduce((a, c) => a.level >= c.level ? a : c, {
+            level: 0,
+            getDamage: () => cannonUpgrade.modify(100)
+          }).getDamage() * 2;
+        }
+        toString() {
+          return 'GoldenCannon';
+        }
+        serialize() {
+          return `${this.constructor.name}:${this.position}:${this.time}`;
+        }
+        static deserialize(constructor, position, time) {
+          return new constructor(position).reset(time);
+        }
+      }
+      
+      class Anvil extends mix(Tappable).with(Mergeable) {
+        constructor(position, level) {
+          super(position);
+          this.level = level;
+          this.maxLevel = 5;
+          this.schedule = [
+            undefined,
+            (index, pos) => index % 20 < 19 ? new FloatingWeapon(pos, 1) : new DecoyPart(pos, 1),
+            (index, pos) => index % 20 < 17 ? new FloatingWeapon(pos, 1) : index % 20 < 19 ? new DecoyPart(pos, 1) : new FancyDecoyPart(pos, 1),
+            (index, pos) => index % 20 < 13 ? new FloatingWeapon(pos, 1) : index % 20 < 18 ? new DecoyPart(pos, index % 20 < 16 ? 1 : 2) : new FancyDecoyPart(pos, 1),
+            (index, pos) => index % 10 < 3 ? new FloatingWeapon(pos, 1) : index % 10 < 8 ? new DecoyPart(pos, index % 10 < 6 ? 1 : 2) : new FancyDecoyPart(pos, 1),
+            (index, pos) => index % 10 < 1 ? new FloatingWeapon(pos, 1) : index % 10 < 6 ?  new DecoyPart(pos, index % 10 < 4 ? 1 : 2) : new FancyDecoyPart(pos, index % 10 < 9 ? 1 : 2)
+          ];
+          this.index = 0;
+        }
+        tapsAvailable() {
+          return Math.min(numSpaces(), Math.floor(iron / [undefined, 250, 500, 750, 1000, 1500][this.level]));
+        }
+        reset() {
+          this.index = 0;
+        }
+        doTap() {
+          if (!hasSpace() || !buy(0, [undefined, 250, 500, 750, 1000, 1500][this.level], 0, 0)) {
+            return false;
+          }
+          
+          this.schedule[this.level](this.index++, getEmptySpace(this.position)).report();
+          return true;
+        }
+        serialize() {
+          return `${this.constructor.name}:${this.position}:${this.level}:${this.index}`;
+        }
+        static deserialize(constructor, position, level, index) {
+          const anvil = new constructor(position, level);
+          anvil.index = index;
+          return anvil;
+        }
+      }
+      
+      class AlchemyTable extends mix(Tappable).with(Mergeable) {
+        constructor(position, level) {
+          super(position);
+          this.level = level;
+          this.maxLevel = 2;
+        }
+        tapsAvailable() {
+          return Math.min(numSpaces(), Math.floor(gunpowder / [undefined, 5, 7, 10][this.level]));
+        }
+        doTap() {
+          if (!hasSpace() || !buy(0, 0, [undefined, 5, 7, 10][this.level], 0)) {
+            return false;
+          }
+          
+          new Bomb(getEmptySpace(this.position), this.level).report();
+          return true;
+        }
+      }
+      
+      class Weapon extends mix(Actor).with(Mergeable) {
+        constructor(position, level) {
+          super(position);
+          this.level = level;
+        }
+        static makeAttackAction(time, i, j, code) {
+          return {
+            time: time,
+            desc: `Attack ${board[j] ? board[j].toString() : 'Unknown'}@${j} with ${board[i] ? board[i].toString() : code}@${i}`,
+            run: ((i, j, code) => {
+              if (!board[i] || board[i].code() != code || !board[j] || !(board[j] instanceof Enemy)) {
+                return false;
+              }
+              return board[i].doAttack(board[j]);
+            }).bind(null, i, j, code),
+            code: `${time.toBase64(3)}a${i.toBase64()}${j.toBase64()}${code}`
+          };
+        }
+        canAttack(target) {
+          return this.getDamage() > 0 && target && target instanceof Enemy;
+          }
+        attack(target) {
+          if (!this.canAttack(target)) {
+            return false;
+          }
+          const action = Weapon.makeAttackAction(currTime, this.position, target.position, this.code());
+          actions.push(action);
+          const result = processEvent(action);
+          draw();
+          return result;
+        }
+        doAttack(target) {
+          if (!this.canAttack(target)) {
+            return false;
+          }
+          target.take(this.getDamage());
+          this.remove();
+          return true;
+        }
+      }
+      
+      class Bomb extends Weapon {
+        constructor(position, level) {
+          super(position, level);
+          this.maxLevel = 5;
+        }
+        getDamage() {
+          return bombUpgrade.modify([undefined, 0, 0, 0, 25000, 75000][this.level]);
+        }
+        toString() {
+          return [undefined, 'PowderPlate', 'InactiveBomb', 'BombWithFuse', 'Bomb1', 'Bomb2'][this.level];
+        }
+      }
+      
+      class FloatingWeapon extends Weapon {
+        constructor(position, level) {
+          super(position, level);
+          this.maxLevel = 7;
+        }
+        getDamage() {
+          return floatingWeaponUpgrade.modify([undefined, 0, 100, 250, 750, 2000, 5000, 12500][this.level]);
+        }
+        toString() {
+          return this.level == 1 ? 'HeatedBlade' : `FloatingWeapon${this.level - 1}`;
+        }
+      }
+      
+      class TipStone extends Actor {}
+      
+      class Necromerger extends Actor {}
+      
+      class Upgrade {
+        constructor(desc, maxLevel, schedule) {
+          this.desc = desc;
+          this.level = 0;
+          this.maxLevel = maxLevel;
+          this.schedule = schedule;
+        }
+        modify(v) {
+          return v;
+        }
+        static makeUpgradeAction(time, i, code) {
+          return {
+            time: time,
+            desc: `Upgrade ${upgrades[i] ? upgrades[i].toString().split(')')[0] + ')' : code}`,
+            run: ((i, code) => {
+              if (!upgrades[i] || upgrades[i].code() != code) {
+                return false;
+              }
+              return upgrades[i].doUpgrade();
+            }).bind(null, i, code),
+            code: `${time.toBase64(3)}u${i.toBase64()}${code}`
+          };
+        }
+        upgrade() {
+          const action = Upgrade.makeUpgradeAction(currTime, upgrades.indexOf(this), this.code());
+          actions.push(action);
+          const result = processEvent(action);
+          draw();
+          return result;
+        }
+        doUpgrade() {
+          if (this.level < this.maxLevel && buy(0, 0, ...this.schedule[this.level])) {
+            this.level++;
+            return true;
+          }
+          return false;
+        }
+        toString() {
+          const cost = [];
+          if (this.level < this.schedule.length && this.schedule[this.level][0]) {
+            cost.push(`${this.schedule[this.level][0]} gunpowder`);
+          }
+          if (this.level < this.schedule.length && this.schedule[this.level][1]) {
+            cost.push(`${this.schedule[this.level][1]} steel`);
+          }
+          if (this.level == this.schedule.length) {
+            cost.push('maxed');
+          }
+          return `${this.desc} (${this.level}/${this.maxLevel}) (${cost.join(', ')})`;
+        }
+        code() {
+          return this.toString().split('/')[0].split('').filter(c => 'ABCDEFGHIJKLMNOPQRSTUBWXYZ0123456789'.indexOf(c) != -1).join('');
+        }
+        serialize() {
+          return `${this.constructor.name}:${this.level}`;
+        }
+        static deserialize(constructor, level) {
+          const upgrade = new constructor();
+          upgrade.level = level;
+          return upgrade;
+        }
+      }
+      
+      class ScoreUpgrade extends Upgrade {
+        constructor() {
+          super('Beating Invaders gives more Score', 5, [
+            [0, 10],
+            [25, 15],
+            [50, 0],
+            [50, 25],
+            [0, 75]
+          ]);
+        }
+        modify(score) {
+          return score * (1 + ($('scoreBoost').checked ? 0.5 : 0) + this.level / 10);
+        }
+      }
+      
+      class EnidUpgrade extends Upgrade {
+        constructor() {
+          super('Enid produces Banners faster', 3, [
+            [10, 10],
+            [25, 0],
+            [0, 25]
+          ]);
+        }
+        modify(baseInterval) {
+          return baseInterval - 600 * this.level;
+        }
+      }
+      
+      class IronUpgrade extends Upgrade {
+        constructor() {
+          super('Increase Iron Cap', 5, [
+            [0, 10],
+            [20, 0],
+            [0, 25],
+            [25, 25],
+            [0, 50]
+          ]);
+        }
+        modify(cap) {
+          return cap * (1 + [0, 0.5, 1, 1.5, 2, 3][this.level]); 
+        }
+      }
+      
+      class FloatingWeaponUpgrade extends Upgrade {
+        constructor() {
+          super('Increase Floating Weapon Damage', 3, [
+            [15, 0],
+            [0, 15],
+            [20, 10]
+          ]);
+        }
+        modify(multiplier) {
+          return multiplier * (1 + [0, 0.25, 0.5, 1][this.level]); 
+        }
+      }
+      
+      class CannonUpgrade extends Upgrade {
+        constructor() {
+          super('Increase Cannon Damage', 3, [
+            [25, 0],
+            [20, 10],
+            [0, 25],
+          ]);
+        }
+        modify(multiplier) {
+          return multiplier * (1 + [0, 0.25, 0.5, 1][this.level]); 
+        }
+      }
+      
+      class BombUpgrade extends Upgrade {
+        constructor() {
+          super('Increase Bomb Damage', 3, [
+            [10, 10],
+            [30, 0],
+            [0, 30]
+          ]);
+        }
+        modify(multiplier) {
+          return multiplier * (1 + [0, 0.25, 0.5, 1][this.level]); 
+        }
+      }
+      
+      class Trade {
+        constructor(day, cost, item) {
+          this.day = day;
+          this.cost = cost;
+          this.item = item;
+          this.traded = false;
+        }
+        static makeTradeAction(time, i, code) {
+          return {
+            time: time,
+            desc: `Trade for ${trades[i] ? trades[i].toString().split(')')[0] + ')' : code}`,
+            run: ((i, code) => {
+              if (!trades[i] || trades[i].code() != code) {
+                return false;
+              }
+              return trades[i].doTrade();
+            }).bind(null, i, code),
+            code: `${time.toBase64(3)}r${i.toBase64()}${code}`
+          };
+        }
+        trade() {
+          const action = Trade.makeTradeAction(currTime, trades.indexOf(this), this.code());
+          actions.push(action);
+          const result = processEvent(action);
+          draw();
+          return result;
+        }
+        doTrade() {
+          if (!this.traded && Math.floor(currTime / 86400) == this.day - 1 && buy(0, 0, ...this.cost)) {
+            this.traded = true;
+            this.item.position = getEmptySpace();
+            board[this.item.position] = this.item;
+            if (this.item.resume) {
+              this.item.resume();
+            }
+            draw();
+            return true;
+          }
+          return false;
+        }
+        code() {
+          return `T${this.day}${this.item.code()}`
+        }
+        toString() {
+          const cost = [];
+          if (this.traded) {
+            cost.push('claimed');
+          } else if (!this.cost[0] && !this.cost[1] && !this.cost[2]) {
+            cost.push('free');
+          } else {
+            if (this.cost[0]) {
+              cost.push(`${this.cost[0]} gunpowder`);
+            }
+            if (this.cost[1]) {
+              cost.push(`${this.cost[1]} steel`);
+            }
+            if (this.cost[2]) {
+              cost.push(`${this.cost[2]} gems`);
+            }
+          }
+          
+          return `${this.item.toString()} (${cost.join(', ')})`;
+        }
+        serialize() {
+          const item = this.item.serialize().split(':');
+          item[1] = 'undefined';
+          return `${this.constructor.name}:${this.day}:${this.cost.join(',')}:${this.traded ? 1 : 0}:${item.join(':')}`;
+        }
+        static deserialize(constructor, day, cost, traded, ...item) {
+          const [itemName, ...itemData] = item;
+          const itemConstructor = eval(itemName);
+          const itemObj = itemConstructor.deserialize(itemConstructor, ...itemData);
+          if (itemObj.suspend) {
+            itemObj.suspend();
+          }
+          const trade = new constructor(day, cost.split(',').map(c => parseInt(c)), itemObj);
+          trade.traded = !!traded;
+          return trade;
+        }
+      }
+      
+      // Initialize
+      
+      const cache = [];
+      function getState(timeStamp) {
+        return cache.findLast(e => e.currTime <= timeStamp) || {
+          currTime: 0,
+          offline: false,
+          score: 0,
+          iron: 50000,
+          gunpowder: 0,
+          steel: $('knightStone').checked ? 25 : 0,
+          invadersDefeated: 0,
+          board: () => {
+            new IronGrunt(0).report();
+            new Musketeer(1).report();
+            new Musketeer(3).report();
+            new IronGrunt(4).report();
+            new GunpowderGrunt(5).report();
+            new GunpowderGrunt(9).report();
+            new SteelGrunt(11).report();
+            new SteelGrunt(13).report();
+            new Warrior(17).report();
+            new Necromerger(27).report();
+            new Anvil(31, 1).report();
+            new TipStone(33).report();
+            new Enid(7).report();
+            new Furnace(25, 1).report();
+            new Furnace(29, 1).report();
+            new Furnace(30, 2).report();
+            new Furnace(34, 2).report();
+            new Furnace(35, 3).report();
+            new Furnace(39, 3).report();
+            
+            if ($('goldenCannon').checked) {
+              new GoldenCannon(37, 1).report();
+            }
+          },
+          upgrades: () => {
+            scoreUpgrade = new ScoreUpgrade();
+            enidUpgrade = new EnidUpgrade();
+            ironUpgrade = new IronUpgrade();
+            floatingWeaponUpgrade = new FloatingWeaponUpgrade();
+            cannonUpgrade = new CannonUpgrade();
+            bombUpgrade = new BombUpgrade();
+            upgrades.push(scoreUpgrade, enidUpgrade, ironUpgrade, floatingWeaponUpgrade, cannonUpgrade, bombUpgrade);
+          },
+          // Horrible workaround, mistakes were made
+          trades: () => {
+            trades.push(
+              new Trade(1, [5, 0], new Decoy()),
+              new Trade(1, [25, 0], new SteelPile(undefined, 3)),
+              new Trade(1, [0, 40], new Anvil(undefined, 2)),
+              new Trade(1, [0, 0], new Cannon(undefined, 2).suspend()),
+              new Trade(1, [0, 0, 25], new GunpowderPile(undefined, 4)),
+              new Trade(1, [0, 0, 50], new Furnace(undefined, 3).suspend()),
+              new Trade(2, [15, 0], new FancyDecoy()),
+              new Trade(2, [25, 0], new Furnace(undefined, 3).suspend()),
+              new Trade(2, [0, 25], new MagicalDecoy()),
+              new Trade(2, [0, 0], new SteelPile(undefined, 3)),
+              new Trade(2, [0, 0, 75], new Cannon(undefined, 4).suspend()),
+              new Trade(2, [0, 0, 100], new Anvil(undefined, 3)),
+              new Trade(3, [40, 0], new Furnace(undefined, 3).suspend()),
+              new Trade(3, [0, 30], new AlchemyTable(undefined, 1)),
+              new Trade(3, [0, 60], new Cannon(undefined, 5).suspend()),
+              new Trade(3, [0, 0], new MagicalDecoy()),
+              new Trade(3, [0, 0, 125], new AlchemyTable(undefined, 3)),
+              new Trade(3, [0, 0, 150], new Anvil(undefined, 4)));
+          }
+        };
+      }
+      
+      function deserialize(serialized) {
+        return serialized.split(';').map(s => {
+          const [code, ...data] = s.split(':');
+          if (code) {
+            const constructor = eval(code);
+            return constructor.deserialize(constructor, ...data.map(d => d.indexOf(',') != -1 || isNaN(parseInt(d)) ? d : parseInt(d)));
+          }
+          return undefined;
+        });
+      }
+      
+      function saveCurrState(time) {
+        cache.push({
+          currTime: time,
+          offline: offline,
+          score: score,
+          iron: iron,
+          gunpowder: gunpowder,
+          steel: steel,
+          invadersDefeated: invadersDefeated,
+          board: ((serialized) => deserialize(serialized)).bind(null, board.map(a => a.serialize()).join(';')),
+          upgrades: ((serialized) => {
+            [scoreUpgrade, enidUpgrade, ironUpgrade, floatingWeaponUpgrade, cannonUpgrade, bombUpgrade] = deserialize(serialized);
+            upgrades.push(scoreUpgrade, enidUpgrade, ironUpgrade, floatingWeaponUpgrade, cannonUpgrade, bombUpgrade);
+          }).bind(null, upgrades.map(u => u.serialize()).join(';')),
+          trades: ((serialized) => {
+            trades.push(...deserialize(serialized));
+          }).bind(null, trades.map(t => t.serialize()).join(';'))
+        });
+      }
+      
+      // When loading a state, the cached state actually includes stuff up to the second before
+      // This is because you will still be able to add actions at the timeStamp being restored
+      // That will require the state to be continually updated until currTime advances
+      // Therefore, loading a state entails loading stuff up to a second before
+      // Then processing the current second, allowing new actions to be added without affecting the saved state
+      // To keep things simple, board init taking place at t=0 means all player actions can only occur as early as t=1
+      function init(timeStamp = 0) {
+        const state = getState(timeStamp);
+        const index = cache.indexOf(state);
+        cache.length = index + 1; // invalidate saved states after the one being loaded
+        
+        events.length = events.findLastIndex(e => fromFormattedTime(e.substr(2, 10)) < state.currTime) + 1;
+        triggeredEvents.length = 0;
+        queue.clear();
+        board.length = 0;
+        upgrades.length = 0;
+        trades.length = 0;
+        
+        offline = state.offline;
+        currTime = state.currTime;
+        score = state.score;
+        iron = state.iron;
+        gunpowder = state.gunpowder;
+        steel = state.steel;
+        invadersDefeated = state.invadersDefeated;
+        
+        state.board();
+        state.upgrades();
+        state.trades();
+        
+        actions.stableSort((a, b) => {
+          if (a.time < b.time) return -1;
+          if (a.time > b.time) return 1;
+          return 0;
+        });
+        queue.push(...actions.filter(a => a.time >= state.currTime));
+        
+        events.push(...triggeredEvents);
+        triggeredEvents.length = 0;
+      }
+      
+      function formatTime(num) {
+        const days = Math.floor(num / 86400);
+        const hours = Math.floor((num - days * 86400) / 3600);
+        const minutes = Math.floor((num - days * 86400 - hours * 3600) / 60);
+        const seconds = num - days * 86400 - hours * 3600 - minutes * 60;
+        return [days, hours, minutes, seconds];
+      }
+      
+      function fromFormattedTime(str) {
+        return parseInt(str[0]) * 86400 + parseInt(str[2]) * 36000 + parseInt(str[3]) * 3600 + parseInt(str[5]) * 600 + parseInt(str[6]) * 60 + parseInt(str[8]) * 10 + parseInt(str[9]);
+      }
+      
+      function drawClock() {
+        const remaining = 86400 * 3 - currTime;
+        const formatted = formatTime(remaining);
+        $('time').innerHTML = `${formatted[0]} Days<br>${formatted[1]}h${formatted[2]}m${formatted[3]}s left`;
+      }
+      
+      function draw() {
+        $('shroud').style.display = 'absolute';
+      
+        drawClock();
+      
+        // Stats
+        $('score').innerHTML = `${score} score`;
+        $('iron').innerHTML = `${iron}/${ironUpgrade.modify(MAX_IRON)} iron`;
+        $('gunpowder').innerHTML = `${gunpowder} gunpowder`;
+        $('steel').innerHTML = `${steel} steel`;
+      
+        // Board
+        const table = $('board');
+        for (let r = 0; r < 8; r++) {
+          const tr = table.querySelectorAll('tr')[r];
+          for (let c = 0; c < 5; c++) {
+            const td = tr.querySelectorAll('td')[c];
+            const val = board[r * 5 + c] ? board[r * 5 + c].toString() : '';
+            td.innerHTML = val;
+            if (val == '') {
+              td.draggable = false;
+            } else {
+              td.draggable = true;
+            }
+          }
+        }
+        
+        // Upgrades
+        $('scoreUpgrade').innerHTML = scoreUpgrade.toString();
+        $('enidUpgrade').innerHTML = enidUpgrade.toString();
+        $('ironUpgrade').innerHTML = ironUpgrade.toString();
+        $('floatingWeaponUpgrade').innerHTML = floatingWeaponUpgrade.toString();
+        $('cannonUpgrade').innerHTML = cannonUpgrade.toString();
+        $('bombUpgrade').innerHTML = bombUpgrade.toString();
+        
+        // Trades
+        const tradeElms = $('trades').querySelectorAll('span');
+        for (let i = 0; i < 6; i++) {
+          tradeElms[i].innerHTML = trades[i + 6 * Math.floor(currTime / 86400)] ? trades[i + 6 * Math.floor(currTime / 86400)].toString() : '';
+        }
+      
+        // Events
+        const eventsScrollHeight = $('events').scrollHeight;
+        $('events').innerHTML = events.concat(queue._heap.slice(0).stableSort((a, b) => {
+          if (a.time < b.time) return -1;
+          if (a.time > b.time) return 1;
+          return 0;
+        }).map(e => {
+          const formatted = formatTime(e.time).map(v => '' + v);
+          const timeStr = `${formatted[0]}d${formatted[1].padStart(2, '0')}h${formatted[2].padStart(2, '0')}m${formatted[3].padStart(2, '0')}s`;
+          return `⏳ ${timeStr}: ${e.success != undefined ? e.desc : e.toString()}`
+        })).filter(e => {
+          if ($('hideFurnaceEvents').checked) {
+            return !(e.indexOf('produces') > -1);
+          }
+          return true;
+        }).filter(e => {
+          if ($('hideFurnaceNoCapacityEvents').checked) {
+            return !(e.indexOf('unable') > -1);
+          }
+          return true;
+        }).filter(e => {
+          if ($('hideCannonFiringEvents').checked) {
+            return e.indexOf('no target found') != -1 || !(e.indexOf('Cannon') != -1 && e.indexOf('deals') != -1);
+          }
+          return true;
+        }).filter(e => {
+          if ($('hideCannonNoTargetEvents').checked) {
+            return e.indexOf('no target found') == -1;
+          }
+          return true;
+        }).filter(e => {
+          if ($('hideAnvilTapSpawnEvents').checked) {
+            return e.indexOf('HeatedBlade spawned') == -1 && e.indexOf('Glove spawned') == -1 && e.indexOf('Gloves spawned') == -1;
+          }
+          return true;
+        }).map(e => {
+          const spanStart = '<span', spanEnd = '</span>'; // Mitigate Notepad++ formatting issue
+          return `${spanStart} class=${e[0] == '⏳' ? 'pending' : 'done'} title="Click to go to this timestamp" data-time=${fromFormattedTime(e.substr(2, 10))}>${e}${spanEnd}`;
+        }).join('');
+        
+        const firstPendingEvent = document.querySelector('#events .pending');
+        $('events').scrollTop = firstPendingEvent ? firstPendingEvent.offsetTop - $('events').offsetHeight * 2 / 3 : $('events').scrollHeight;
+      
+        // Actions
+        actions.stableSort((a, b) => {
+          if (a.time < b.time) return -1;
+          if (a.time > b.time) return 1;
+          return 0;
+        });
+      
+        $('actions').innerHTML = actions.map((a, i) => {
+          const formatted = formatTime(a.time).map(v => '' + v);
+          const timeStr = `${formatted[0]}d${formatted[1].padStart(2, '0')}h${formatted[2].padStart(2, '0')}m${formatted[3].padStart(2, '0')}s`;
+          const icon = a.time > currTime ? '⏳' : (a.success ? '✅' : '❌');
+          const className = a.time > currTime ? 'pending' : 'done';
+          const spanStart = '<span', spanEnd = '</span>'; // Mitigate Notepad++ formatting issue
+          return `${spanStart} title="Click to go to this timestamp, drag within container to delete" draggable="true" class=${className} data-index=${i}>${icon} ${timeStr}: ${a.desc}${spanEnd}`;
+        }).join('');
+       
+        const firstPendingAction = document.querySelector('#actions .pending');
+        $('actions').scrollTop = firstPendingAction ? firstPendingAction.offsetTop - $('actions').offsetHeight * 2 / 3 : $('actions').scrollHeight;
+       
+        // Clock
+        $('clock').value = currTime;
+      
+        // Hash
+        window.location.hash = `${currTime.toBase64(3)}${$('knightStone').checked ? 'k' : ''}${$('goldenCannon').checked ? 'g' : ''}${$('scoreBoost').checked ? 's' : ''}${actions.length ? ';' : ''}${actions.map(a => a.code).join(';')}`;
+      
+        $('shroud').style.display = 'none';
+      }
+      
+      function processEvent(curr) {
+        currTime = curr.time;
+        const formatted = formatTime(currTime).map(v => '' + v);
+        const timeStr = `${formatted[0]}d${formatted[1].padStart(2, '0')}h${formatted[2].padStart(2, '0')}m${formatted[3].padStart(2, '0')}s`;
+      
+        const result = curr.run();
+        events.push(`${result ? '✅' : '❌'} ${timeStr}: ${curr.desc}`);
+        
+        events.push(...triggeredEvents);
+        triggeredEvents.length = 0;
+      
+        const actionId = actions.indexOf(curr);
+        if (actionId != -1) {
+          actions[actionId].success = result;
+        }
+      
+        return result;
+      }
+      
+      function process(until) {
+        let change = false;
+        
+        $('shroud').style.display = 'absolute';
+      
+        if (until == undefined) {
+          // if until is not defined, the request is to recalculate from the beginning up to currTime
+          until = currTime;
+          currTime = Infinity; // to force reinit in later if block
+          cache.length = 0; // to clear out all saved states
+        } else {
+          until = Math.min(Math.max(1, until), MAX_TIME);
+        }
+      
+        if (until < currTime) {
+          init(until);
+        }
+      
+        let t;
+        while (currTime <= until) {
+          if (queue.isEmpty() || queue.peek().time > until) {
+            break;
+          }
+          
+          if (t && events.length > cache.length * 5000 && queue.peek().time != t) {
+            saveCurrState(t);
+          }
+          
+          t = queue.peek().time;
+          processEvent(queue.pop());
+          change = true;
+        }
+        currTime = until;
+        
+        return change;
+      }
+      
+      $('clock').addEventListener('change', (evt) => {
+        process(parseInt(evt.target.value));
+        draw();
+      })
+      
+      // Load from hash
+      function loadFromHash() {
+        const data = window.location.hash.substring(1).split(';');
+        if (!data.length) {      
+          init();
+          return;
+        }
+      
+        const targetCurrTime = parseInt64(data[0].substr(0, 3));
+        if (data[0].indexOf('k') != -1) {
+          $('knightStone').checked = true;
+        }
+        if (data[0].indexOf('g') != -1) {
+          $('goldenCannon').checked = true;
+        }
+        if (data[0].indexOf('s') != -1) {
+          $('scoreBoost').checked = true;
+        }
+        $('offlineMode').checked = false;
+        
+        init();
+      
+        // State
+        let offline = false;
+      
+        function parseCode(time, code) {
+          switch (code[0]) {
+            case 'o': // offline mode
+              offline = !offline;
+              return makeOfflineModeAction(time, offline);
+            case 'b': // buy item
+              return makeBuyItemAction(time, code[1]);
+            case 's': // swap, can be optimized away
+              return Actor.makeSwapAction(time, parseInt64(code[1]), parseInt64(code[2]), code.substr(3));
+            case 'm': // merge
+              return makeMergeAction(time, parseInt64(code[1]), parseInt64(code[2]), code.substr(3));
+            case 'M': // merge all to max level
+              return makeMergeAllAction(time, parseInt64(code[1]), code.substr(2));
+            case 't': // tap
+              return Tappable.makeTapAction(time, parseInt64(code[1]), code.substr(2));
+            case 'T': // multi-Tap
+              return Tappable.makeMultiTapAction(time, parseInt64(code[1]), parseInt64(code[2]), code.substr(3), false);
+            case 'A': // muti-Tap followed by autoMerge
+              return Tappable.makeMultiTapAction(time, parseInt64(code[1]), parseInt64(code[2]), code.substr(3), true);
+            case 'c': // claim
+              return makeClaimAction(time, parseInt64(code[1]), code.substr(2));
+            case 'u': // upgrade
+              return Upgrade.makeUpgradeAction(time, parseInt64(code[1]), code.substr(2));
+            case 'a': // attack
+              return Weapon.makeAttackAction(time, parseInt64(code[1]), parseInt64(code[2]), code.substr(3));
+            case 'r': // trade
+              return Trade.makeTradeAction(time, parseInt64(code[1]), code.substr(2));
+            default:
+              console.log('Unknown unparseable action', code, 'at time', time);
+              throw new Error()
+          }
+        }
+      
+        for (let i = 1; i < data.length; i++) {
+          const time = parseInt64(data[i].substr(0, 3));
+          process(time);
+          const action = parseCode(time, data[i].substr(3));
+          actions.push(action);
+          queue.push(action);
+        }
+      
+        process(MAX_TIME);
+        process(targetCurrTime);
+      }
+      
+      loadFromHash();
+      
+      draw();
+      
+    </script>
+  </body>
+</html>
