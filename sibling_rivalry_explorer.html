@@ -89,6 +89,17 @@
       #play {
         width: 28px;
       }
+      #extra {
+        float: right;
+        padding: 20px;
+      }
+      #help, #deleteInvalidActions, #reset {
+        width: 100px;
+        height: 50px;
+      }
+      input:disabled + label {
+        color: grey;
+      }
     </style>
   </head>
   <body>
@@ -166,12 +177,22 @@
     </div>
     <div class="page limited">
       <div>
-        <b>Config</b><br><br>
+        <b>Config</b>
+        <div id="extra">
+          <button id="help" onclick="help()">Help</button>
+          <br><br>
+          <button id="deleteInvalidActions" onclick="deleteInvalidActions()">Delete invalid actions</button>
+          <br><br>
+          <button id="reset" onclick="reset()">Reset</button>
+        </div>
+        <br><br>
         <input type="checkbox" id="offlineMode" onchange="changeOfflineMode()"><label for="offlineMode">Offline Mode</label><br>
         <input type="checkbox" id="knightStone" onchange="process(); draw()"><label for="knightStone">Knight Stone</label><br>
         <input type="checkbox" id="goldenCannon" onchange="process(); draw()"><label for="goldenCannon">Golden Cannon</label><br>
         <input type="checkbox" id="scoreBoost" onchange="process(); draw()"><label for="scoreBoost">Score Boost</label><br>
         <input type="checkbox" id="autoMerge"><label for="autoMerge">Automerge after Multitap</label><br>
+        <input type="checkbox" id="autoMergeBeforeClaim"><label for="autoMergeBeforeClaim">Automerge before Claim</label><br>
+        <input type="checkbox" id="useCache" disabled><label for="useCache">Cache previous states (buggy)</label><br>
       </div>
       <br>
       <div>
@@ -207,6 +228,8 @@
       </div>
     </div>
     <script>
+      const VERSION = '0.01';
+      
       // Modified from https://stackoverflow.com/questions/42919469/efficient-way-to-implement-priority-queue-in-javascript
       {
         const top = 0,
@@ -368,11 +391,21 @@
       function tap(ev) {
         const parent = ev.target.parentNode;
         const targetIndex = Array.prototype.indexOf.call(parent.parentNode.querySelectorAll('tr'), parent) * 5 + Array.prototype.indexOf.call(parent.querySelectorAll('td'), ev.target);
+        const target = board[targetIndex];
         
-        if (board[targetIndex] && board[targetIndex].tap) {
-          board[targetIndex].tap();
-        } else if (board[targetIndex] && (!board[targetIndex].mergeAll || !board[targetIndex].mergeAll()) && board[targetIndex].claim) {
-          board[targetIndex].claim();
+        if (!target) {
+          return;
+        }
+        
+        // If target has both claim and mergeAll, prefer to mergeAll if option is selected. If mergeAll fails, fall back to claim.
+        const hasTap = !!target.tap, hasClaim = !!target.claim, hasMergeAll = !!target.mergeAll;
+        
+        if (hasTap) {
+          target.tap();
+        } else if (!hasClaim && hasMergeAll) {
+          target.mergeAll();
+        } else if ((!$('autoMergeBeforeClaim').checked || !hasMergeAll || !target.mergeAll()) && hasClaim) {
+          target.claim();
         }
       }
       
@@ -570,6 +603,30 @@
         }
         draw();
         $('actions').scrollTop = scrollTop;
+      }
+      
+      function deleteInvalidActions() {
+        const time = currTime;
+        process(3 * 86400);
+        const filteredActions = actions.filter(a => a.success);
+        actions.length = 0;
+        actions.push(...filteredActions);
+        process(currTime);
+        draw();
+      }
+      
+      function reset() {
+        if (window.confirm('Are you sure you want to reset? This will delete all actions and cannot be undone.')) {
+          actions.length = 0;
+          process(1);
+          draw();
+        }
+      }
+      
+      function help() {
+        window.alert(`Thank you for checking the Necromerger: Sibling Rivalry gameplay optimization tool version ${VERSION} out. At a high level, this tool allows you to try out various strategies, go back in time to adjust play and share your strategy with friends.\n\nMost in-game elements are laid out similarly to Necromerger: Sibling Rivalry but there are a few differences regarding controls.`);
+        window.alert('Time does not run automatically in this optimization tool. Use the time controls at the top left of the page to go backwards or forwards 1 hour, 1 minute or 1 second. Use the play/pause button to start and stop automatic advancement of time.\n\nClick/tap on resource piles to claim. Double click/tap on Anvils and Alchemy Tables to trigger multitap - tap repeatedly until resource or board space is exhausted.\n\nClick on actions or events to set current time to that action or event. Drag an action within the actions list to delete a specific action.');
+        window.alert('Copy the url to share your strategy. Happy optimizing!');
       }
       
       function startStop() {
@@ -1749,6 +1806,9 @@
       }
       
       function saveCurrState(time) {
+        if (!$('useCache').checked) {
+          return;
+        }
         cache.push({
           currTime: time,
           offline: offline,
