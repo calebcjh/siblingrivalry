@@ -190,9 +190,9 @@
         <input type="checkbox" id="knightStone" onchange="process(); draw()"><label for="knightStone">Knight Stone</label><br>
         <input type="checkbox" id="goldenCannon" onchange="process(); draw()"><label for="goldenCannon">Golden Cannon</label><br>
         <input type="checkbox" id="scoreBoost" onchange="process(); draw()"><label for="scoreBoost">Score Boost</label><br>
-        <input type="checkbox" id="autoMerge"><label for="autoMerge">Automerge after Multitap</label><br>
-        <input type="checkbox" id="autoMergeBeforeClaim"><label for="autoMergeBeforeClaim">Automerge before Claim</label><br>
-        <input type="checkbox" id="useCache" disabled><label for="useCache">Cache previous states (buggy)</label><br>
+        <input type="checkbox" id="autoMerge" checked><label for="autoMerge">Automerge after Multitap</label><br>
+        <input type="checkbox" id="autoMergeBeforeClaim" checked><label for="autoMergeBeforeClaim">Automerge before Claim</label><br>
+        <input type="checkbox" id="useCache" checked><label for="useCache">Cache previous states (buggy)</label><br>
       </div>
       <br>
       <div>
@@ -593,7 +593,7 @@
         const actionIndex = parseInt(payload);
         const scrollTop = $('actions').scrollTop;
         if (actions[actionIndex].time <= currTime) {
-          cache.length = cache.findLastIndex(e => e.currTime < actions[actionIndex].time) + 1;
+          cache.length = cache.findLastIndex(e => e.currTime <= actions[actionIndex].time) + 1;
           actions.splice(actionIndex, 1);
           const until = currTime;
           currTime = Infinity;
@@ -1810,7 +1810,7 @@
           return;
         }
         cache.push({
-          currTime: time,
+          currTime: time + 1,
           offline: offline,
           score: score,
           iron: iron,
