@@ -192,7 +192,7 @@
         <input type="checkbox" id="scoreBoost" onchange="process(); draw()"><label for="scoreBoost">Score Boost</label><br>
         <input type="checkbox" id="autoMerge" checked><label for="autoMerge">Automerge after Multitap</label><br>
         <input type="checkbox" id="autoMergeBeforeClaim" checked><label for="autoMergeBeforeClaim">Automerge before Claim</label><br>
-        <input type="checkbox" id="useCache" checked><label for="useCache">Cache previous states (buggy)</label><br>
+        <input type="checkbox" id="useCache" checked><label for="useCache">Cache previous states</label><br>
       </div>
       <br>
       <div>
@@ -599,6 +599,7 @@
           currTime = Infinity;
           process(until);
         } else {
+          queue.remove(actions[actionIndex]);
           actions.splice(actionIndex, 1);
         }
         draw();
@@ -617,6 +618,7 @@
       
       function reset() {
         if (window.confirm('Are you sure you want to reset? This will delete all actions and cannot be undone.')) {
+          $('offlineMode').checked = false;
           actions.length = 0;
           process(1);
           draw();
@@ -1405,6 +1407,9 @@
           anvil.index = index;
           return anvil;
         }
+        toString() {
+          return `${this.constructor.name}${this.level} (${this.index})`;
+        }
       }
       
       class AlchemyTable extends mix(Tappable).with(Mergeable) {
@@ -1426,7 +1431,7 @@
         }
       }
       
-      class Weapon extends mix(Actor).with(Mergeable) {
+      class Weapon extends mix(Actor).with(Mergeable, Claimable) {
         constructor(position, level) {
           super(position);
           this.level = level;
@@ -1464,6 +1469,9 @@
           target.take(this.getDamage());
           this.remove();
           return true;
+        }
+        doClaim() {
+          return super.doClaim(0, 0, 0);
         }
       }
       
