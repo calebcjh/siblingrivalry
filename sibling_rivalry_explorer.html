@@ -1416,7 +1416,7 @@
         constructor(position, level) {
           super(position);
           this.level = level;
-          this.maxLevel = 2;
+          this.maxLevel = 3;
         }
         tapsAvailable() {
           return Math.min(numSpaces(), Math.floor(gunpowder / [undefined, 5, 7, 10][this.level]));
